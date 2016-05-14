@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "es6",
+        "noImplicitAny": false,
+        "sourceMap": false,
+        "outDir": "bin",
+        "jsx": "react"
+    },
+    "exclude": [
+        "bin",
+        "dist",
+        "packages",
+        "node_modules",
+        "typings/browser",
+        "typings/browser.d.ts",
+        "typings/custom"
+    ]
+}

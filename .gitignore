@@ -31,3 +31,12 @@ node_modules
 
 # Optional REPL history
 .node_repl_history
+
+# Ignore built TS files
+bin/
+
+# Ignore typings files
+typings/main/
+typings/browser/
+typings/main.d.ts
+typings/browser.d.ts
