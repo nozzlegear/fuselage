@@ -1,9 +1,10 @@
+/// <reference path="./../typings/main.d.ts" />
 
 require("script!responsive-nav/client/dist/responsive-nav.js");
 require("responsive-nav/client/dist/styles/responsive-nav.css");
 
 declare var responsiveNav: any;
-
+ 
 var nav = responsiveNav("#collapsible", {
     animate: false,
     label: "Menu", // String: Label for the navigation toggle
