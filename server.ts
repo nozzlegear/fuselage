@@ -4,6 +4,7 @@ import * as Hapi from "hapi";
 import * as joi from "joi";
 import * as boom from "boom";
 import * as path from "path";
+import * as util from "util";
 import uri = require('jsuri');
 import {every as all, clone, find, some, merge, filter, map, isArray, isError} from "lodash";
 
@@ -95,7 +96,7 @@ async function startServer()
                 title: payload.error
             };
             
-            console.log(`${payload.statusCode} ${payload.error} for ${request.url.pathname}. ${payload.message}.`)
+            console.log(`${payload.statusCode} ${payload.error} for ${request.url.pathname}. ${payload.message}.`);
             
             return (reply.view("errors/error.js", props)).code(payload.statusCode);
         }
