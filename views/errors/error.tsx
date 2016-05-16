@@ -25,27 +25,19 @@ export default function ErrorPage(props: IProps)
             </LayoutHead>
             <body className="minimal">
                 <main id="body">
-                    <div className="container">
-                        <div className="row header">
-                            <div className="col-md-12">
-                                <div className="logo">
-                                    <a href="/">
-                                        {"APP NAME"}
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="row">
-                            <div className="col-md-8 col-md-offset-2 error">
-                                <h2>
-                                    Oops!
-                                </h2>
-                                <h3>{props.errorType}.</h3>
-                                <p className="lead">
-                                    <a href="/" style={{"color":"#fff", "textDecoration":"underline"}}>Click here to go back.</a>
-                                </p>
-                            </div>
-                        </div>
+                    <div className="logo">
+                        <a href="/">
+                            {"APP NAME"}
+                        </a>
+                    </div>
+                    <div className="error">
+                        <h2>
+                            Oops!
+                        </h2>
+                        <h3>{props.errorType}.</h3>
+                        <p>
+                            <a href="/" style={{"color":"#fff", "textDecoration":"underline"}}>Click here to go back.</a>
+                        </p>
                     </div>
                 </main>
             </body>

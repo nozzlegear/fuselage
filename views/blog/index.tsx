@@ -21,7 +21,7 @@ export default function BlogIndex(props: IProps)
     const css = ["/wwwroot/css/post/post.min.css"];
     
     const posts = map(props.posts || [], post => (
-        <div key={uniqueId()} className="post">
+        <article key={uniqueId()} className="post">
             <div className="post-header">
                 <span className="post-meta">
                     by {"Joshua Harms"}
@@ -35,57 +35,36 @@ export default function BlogIndex(props: IProps)
             <div className="post-excerpt">
                 <p>{post.description}</p>
             </div>
-        </div>
+        </article>
     ));
     
     return (
         <Layout {...props} css={css}>
-            <main id="blog-index">
-                <div id="splash" className="bg checkered color-darkblue">
-                    <div className="container">
-                        <div className="row">
-                            <div className="col-md-12 text-center">
-                                <h1>
-                                    {"Maecenas quis erat id ipsum bibendum mattis at in ante."}
-                                </h1>
-                            </div>
-                        </div>
+            <main className="page-main" id="blog-index">
+                {posts}
+                <div className="pagination">
+                    <div className="left">
+                        {
+                            !showOlderButton ? null :
+                            
+                            <a className="btn btn-default" href={`/blog/?page=${props.currentPage + 1}`}>
+                                <i className="fa fa-long-arrow-left color" />
+                                {" Older posts"}
+                            </a>
+                        }
                     </div>
-                </div>
-                <div className="section white">
-                    <div className="container long-form">
-                        <div className="row">
-                            <div className="col-md-10 col-md-offset-1">
-                                {posts}
-                                <div className="pagination">
-                                    <div className="row">
-                                        <div className="col-xs-4">
-                                            {
-                                                !showOlderButton ? null :
-                                                
-                                                <a className="btn btn-default" href={`/blog/?page=${props.currentPage + 1}`}>
-                                                    <i className="fa fa-long-arrow-left color" />
-                                                    {" Older posts"}
-                                                </a>
-                                            }
-                                        </div>
-                                        <div className="col-xs-4 page-number">
-                                            <span>{`Page ${props.currentPage} of ${props.totalPages}`}</span>
-                                        </div>
-                                        <div className="col-xs-4 text-right">
-                                            { 
-                                                !showNewerButton ? null :
-                                                
-                                                <a className="btn btn-default" href={`/blog/?page=${props.currentPage - 1}`}>
-                                                    {"Newer Posts "}
-                                                    <i className="fa fa-long-arrow-right color" />
-                                                </a>
-                                            }
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    <div className="middle">
+                        {`Page ${props.currentPage} of ${props.totalPages}`}
+                    </div>
+                    <div className="right">
+                        { 
+                            !showNewerButton ? null :
+                            
+                            <a className="btn btn-default" href={`/blog/?page=${props.currentPage - 1}`}>
+                                {"Newer Posts "}
+                                <i className="fa fa-long-arrow-right color" />
+                            </a>
+                        }
                     </div>
                 </div>
             </main>

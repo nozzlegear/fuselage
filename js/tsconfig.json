@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "es5",
+        "noImplicitAny": false,
+        "sourceMap": false,
+        "outDir": "../bin/js",
+        "jsx": "react"
+    },
+    "files": [
+        "nav.ts",
+        "blog/blog-post.ts"
+    ]
+}

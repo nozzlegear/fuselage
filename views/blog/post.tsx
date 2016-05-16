@@ -15,7 +15,7 @@ export default function BlogPostPage(props: IProps)
         "/wwwroot/js/blog/blog-post.min.js"
     ];
     const css = [
-        "/wwwroot/bundles/blog-post.min.css"
+        "/wwwroot/css/post.min.css"
     ];
     
     const shareUrl = `https://DOMAIN.com/blog/${props.post.url}`;
@@ -37,56 +37,26 @@ export default function BlogPostPage(props: IProps)
     
     return (
         <Layout {...props} css={css} scripts={scripts}>
-            <main id="blog-post">
-                <div className="bg tops-blooby">
-                    <div className="container">
-                        <div className="row">
-                            <div className="col-md-10 col-md-offset-1 text-center">
-                                <h1 className="page-title">
-                                    {props.post.title}
-                                </h1>
-                            </div>
-                        </div>
-                    </div>
+            <main className="page-main" id="blog-post">
+                <h1 className="page-title">
+                    {props.post.title}
+                </h1>
+                <h4 className="post-meta">
+                    {"by AUTHOR NAME"}
+                </h4>
+                <article dangerouslySetInnerHTML={{__html: props.post.content}} />
+                <div className="author">
+                    <h4>{"AUTHOR NAME"}</h4>
+                    <p>
+                        {'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec at erat maximus turpis mollis vestibulum.'}
+                    </p>
+                    <p>
+                        {"Phasellus velit arcu, accumsan pretium gravida vitae, dictum faucibus sem. "}
+                    </p>
                 </div>
-                <div className="section white">
-                    <div className="container long-form">
-                        <div className="row">
-                            <div className="col-md-10 col-md-offset-1">
-                                <div className="post">
-                                    <div className="post-header">
-                                        <span className="post-meta">
-                                            {"by AUTHOR NAME"}
-                                        </span>
-                                    </div>
-                                    <div className="post-excerpt">
-                                        <article dangerouslySetInnerHTML={{__html: props.post.content}} />
-                                    </div>
-                                    <div className="post-footer">
-                                        <div className="row">
-                                            <div className="col-md-7">
-                                                <div className="author">
-                                                    <h4>{"AUTHOR NAME"}</h4>
-                                                    <p>
-                                                        {'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec at erat maximus turpis mollis vestibulum.'}
-                                                    </p>
-                                                    <p>
-                                                        {"Phasellus velit arcu, accumsan pretium gravida vitae, dictum faucibus sem. "}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <div className="col-md-5">
-                                                {share}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="text-center">
-                                    <a href="/blog">Click here to head back to the blog.</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                {share}
+                <div className="back">
+                    <a href="/blog">Click here to head back to the blog.</a>
                 </div>
             </main>
         </Layout>

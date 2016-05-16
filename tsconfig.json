@@ -11,6 +11,7 @@
         "bin",
         "dist",
         "packages",
+        "browser",
         "node_modules",
         "typings/browser",
         "typings/browser.d.ts",

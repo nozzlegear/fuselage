@@ -1,0 +1,189 @@
+$navMaxWidth: 991px;
+$navMinWidth: 992px;
+
+html.js-nav-active {
+    nav#header-nav {
+        .brand {
+            margin-bottom: 10px;
+        }
+    }
+}
+
+nav#header-nav {
+    margin: 0;
+    width: 100%;
+    max-width: 1170px;
+    border: none;
+    background: #fff;
+    padding: 10px 0;
+    display: flex;
+    min-height: 66px;
+
+    @media all and (min-width: $navMinWidth) {
+        align-items: center;
+    }
+
+    @media all and (max-width: $navMaxWidth) {
+        -ms-flex-direction: column;
+        -webkit-flex-direction: column;
+        flex-direction: column;
+    }    
+
+    .brand {
+        display: flex;
+        align-items: center;
+
+        @media all and (max-width: $navMaxWidth) {
+            -ms-flex: 1 1;
+            -webkit-flex: 1 1;
+            flex: 1 1;
+        }
+
+        > a {
+            margin: 0 15px;
+            padding: 0;
+            float: left;
+            position: relative;
+            color: #333;
+            font-size: 25px;
+            font-weight: 300;
+            line-height: 1.1;
+
+            &:hover {
+                text-decoration: none;
+                color: #7461aa;
+            }
+        }
+
+        #nav-toggle {
+            display: none;
+
+            @media all and (max-width:$navMaxWidth) {
+                -ms-flex: 1 0;
+                -webkit-flex: 1 0;
+                flex: 1 0;
+                display: flex;
+                -ms-flex-direction: column;
+                -webkit-flex-direction: column;
+                flex-direction: column;
+                align-items: flex-end;
+            }
+
+            > .toggler {
+                display: block;
+                padding: 10px;
+                color: #7a7a7a;
+                margin: 0 15px;
+
+                @media all and (min-width:$navMinWidth) {
+                    display: none;
+                }
+
+                &:hover {
+                    color: #7461aa;
+                    text-decoration: none;
+                }
+            }
+        }
+    }
+
+    .collapsible {
+        -ms-flex: 1 0;
+        -webkit-flex: 1 0;
+        flex: 1 0;
+        display: flex;
+        align-items: center;
+
+        @media all and (max-width:$navMaxWidth) {
+            -ms-flex-direction: column;
+            -webkit-flex-direction: column;
+            flex-direction: column;
+        }
+
+        menu {
+            list-style-type: none;
+            display: flex;
+
+            @media all and (max-width:$navMaxWidth) {
+                padding: 0;
+                margin: 0;
+                -ms-flex-direction: column;
+                -webkit-flex-direction: column;
+                flex-direction: column;
+                width: 100%;
+                text-align: center;
+            }
+
+            &.right {
+                -ms-flex: 1 0;
+                -webkit-flex: 1 0;
+                flex: 1 0;
+                display: flex;
+                -ms-flex-direction: row;
+                -webkit-flex-direction: row;
+                flex-direction: row;
+                justify-content: flex-end;
+                
+                @media all and (max-width: $navMaxWidth) {
+                    -ms-flex-direction: column;
+                    -webkit-flex-direction: column;
+                    flex-direction: column;
+                    justify-content: unset;
+                }
+            }
+
+            &.left > div, &.right > div {
+                margin: 0 15px;
+                font-size: 15px;
+                color: #7a7a7a;
+                position: relative;
+                padding: 10px 0;
+
+                @media all and (max-width: $navMaxWidth) {
+                    border-top: 1px solid #ccc;
+                    padding: 0;
+                    width: 100%;
+                }
+
+                &.active {
+                    > a:not(.btn) {
+                        border-bottom: 2px solid #7461aa;
+                    }
+                }
+
+                > a.btn {
+                    @media all and (max-width: $navMaxWidth) {
+                        margin: 15px 0;
+                    }
+                }
+
+                > a:not(.btn) {
+                    margin: 0;
+                    padding: 3.5px 0;
+                    color: #7a7a7a;
+                    -webkit-border-radius: 0;
+                    -moz-border-radius: 0;
+                    -o-border-radius: 0;
+                    border-radius: 0;
+                    border-bottom: 2px solid #fff;
+
+                    &:hover {
+                        text-decoration: none;
+                        border-bottom: 2px solid #7461aa;
+                    }
+
+                    @media all and (max-width: $navMaxWidth) {
+                        display: block;
+                        width: 100%;
+                        padding: 15px 0;
+
+                        &:hover {
+                            color: #fff;
+                            background-color: #7461aa;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

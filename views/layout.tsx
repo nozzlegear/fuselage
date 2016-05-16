@@ -26,46 +26,40 @@ export default function Layout(props: LayoutProps)
         <LayoutHead {...headProps} />
         <body>
             <nav id="header-nav">
-                <div className="container">
-                    <div className="brand">
-                        <a href="/">
-                            {props.appName}
+                <div className="brand">
+                    <a href="/">
+                        {props.appName}
+                    </a>
+                    <div id="nav-toggle">
+                        <a href="#" id="toggler" className="toggler">
+                            <i className="fa fa-bars"></i>
                         </a>
-                        <div id="nav-toggle">
-                            <a href="#" id="toggler" className="toggler">
-                                <i className="fa fa-bars"></i>
+                    </div>
+                </div>
+                <div id="collapsible" className="collapsible">
+                    <menu className="right">
+                        <div className={props.blogLinkClass}>
+                            <a href="/blog">
+                                Blog
                             </a>
                         </div>
-                    </div>
-                    <div id="collapsible" className="collapsible">
-                        <menu className="right">
-                            <div className={props.blogLinkClass}>
-                                <a href="/blog">
-                                    Blog
-                                </a>
-                            </div>
-                        </menu>
-                    </div>
+                    </menu>
                 </div>
             </nav>
             <div id="body">
                 {props.children}
             </div>
             <footer id="footer">
-                <div className="container">
-                    <div className="row">
-                        <div className="col-md-12">
-                            <div className="copyright">
-                                <p>
-                                    {`© ${props.appName}, ${new Date().getUTCFullYear()}. All rights reserved.`}
-                                </p>
-                                <p>
-                                    Powered by <a target="_blank" href="https://github.com/nozzlegear/fuselage">Fuselage</a>.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <p>
+                    {`© ${props.appName}, ${new Date().getUTCFullYear()}. All rights reserved.`}
+                </p>
+                <p>
+                    {"Powered by "}
+                    <a target="_blank" href="https://github.com/nozzlegear/fuselage">
+                        {"Fuselage"}
+                    </a>
+                    {"."}
+                </p>
             </footer>
             <LayoutScripts scripts={props.scripts} />
         </body>

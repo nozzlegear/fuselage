@@ -17,6 +17,7 @@ export default function Scripts(props: IProps)
     
     return (
         <div className="hide">
+            <script src="/wwwroot/js/nav.min.js" />
             {scripts}
             {props.children}  
         </div>
