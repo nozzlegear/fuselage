@@ -59,12 +59,21 @@ const sassTask = (gulpSrc) =>
 const tsTask = (type, gulpSrc, singleFileSrcPath) =>
 {
     const isServer = type === "server";
-    let outputPath = findTsDir(isServer ? "bin" : singleFileSrcPath ? "wwwroot" : "wwwroot/js", singleFileSrcPath);
+    const outputPath = findTsDir(isServer ? "bin" : singleFileSrcPath ? "wwwroot" : "wwwroot/js", singleFileSrcPath);
     const project = ts.createProject(path.resolve(__dirname, isServer ? "./tsconfig.json" : "./js/tsconfig.json"));
     
     const task = gulpSrc
         .pipe(ts(project))
-        .js;
+        .js
+        .pipe(rename(path =>
+        {
+            if (singleFileSrcPath)
+            {
+                //Single files need their directories replaced, else they'll output in "wwwroot/js/js" instead of "wwwroot/js"
+                
+                path.dirname = "";
+            }
+        }));
         
     if (isServer)
     {
