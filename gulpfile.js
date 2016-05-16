@@ -1,39 +1,85 @@
-var gulp = require("gulp");
-var path = require("path");
-var clean = require("gulp-clean");
-var mergeTasks = require("merge2");
-var minifyCss = require("gulp-clean-css");
-var minifyJs = require("gulp-uglify");
-var rename = require("gulp-rename");
-var concat = require("gulp-concat");
-var webpack = require('webpack-stream');
-var sequence = require("gulp-sequence");
-var sass = require('gulp-sass');
-var autoprefix = require("gulp-autoprefixer");
-var map = require("lodash").map;
-var merge = require("lodash").merge;
-var gutil = require("gulp-util");
+"use strict";
 
-gulp.task("build", function () 
+const gulp = require("gulp");
+const path = require("path");
+const clean = require("gulp-clean");
+const mergeTasks = require("merge2");
+const minifyCss = require("gulp-clean-css");
+const minifyJs = require("gulp-uglify");
+const rename = require("gulp-rename");
+const concat = require("gulp-concat");
+const webpack = require('webpack-stream');
+const sequence = require("gulp-sequence");
+const sass = require('gulp-sass');
+const autoprefix = require("gulp-autoprefixer");
+const gutil = require("gulp-util");
+const ts = require("gulp-typescript");
+const gulpForeach = require('gulp-foreach');
+const map = require("lodash").map;
+const merge = require("lodash").merge;
+const server = require("gulp-develop-server");
+
+const tsBrowserFiles = ["js/**/*.ts"];
+const tsServerFiles = ["server.ts", "routes/**/*.ts", "views/**/*.{ts,tsx}"];
+const sassFiles = ['css/**/*.scss', "css/*.scss"];
+
+const findTsDir = (desiredFolder, filepath) =>
 {
+    if (!filepath) return desiredFolder;
     
-})
+    if (path.normalize(desiredFolder).indexOf(path.sep) > -1)
+    {
+        throw new Error("Error finding tsdir. Because of the way ts works with single files, desiredFolder cannot contain a path. Good: 'wwwroot'. Bad: 'wwwroot/path'");
+    }
+    
+    const projDir = path.resolve(__dirname).toLowerCase();
+    const parsedPath = path.parse(filepath);
 
-gulp.task("default", function ()
-{   
-    var uglifyOptions = {
-        mangle: true
-    };
-    var cssMinOptions = {
+    return path.join(projDir, desiredFolder, parsedPath.dir.toLowerCase().replace(projDir, "")); 
+}
+
+const sassTask = (gulpSrc) =>
+{
+    const cssMinOptions = {
         processImport: false,
         processImportFrom: ['!fonts.googleapis.com']
     }
-    var webpackOptions = {
+    
+    return gulpSrc
+        .pipe(sass())
+        .pipe(autoprefix())
+        .pipe(minifyCss(cssMinOptions))
+        .pipe(rename((path) => 
+        {
+            path.extname = ".min.css";
+        }))
+        .pipe(gulp.dest('wwwroot/css'));
+}
+
+const tsTask = (type, gulpSrc, singleFileSrcPath) =>
+{
+    const isServer = type === "server";
+    let outputPath = findTsDir(isServer ? "bin" : singleFileSrcPath ? "wwwroot" : "wwwroot/js", singleFileSrcPath);
+    const project = ts.createProject(path.resolve(__dirname, isServer ? "./tsconfig.json" : "./js/tsconfig.json"));
+    
+    const task = gulpSrc
+        .pipe(ts(project))
+        .js;
+        
+    if (isServer)
+    {
+        return task.pipe(gulp.dest(outputPath));
+    }
+    
+    const uglifyOptions = {
+        mangle: true
+    };
+    const webpackOptions = {
         module: {
             loaders: [
-                { 
-                    test: /\.css$/, 
-                    loaders: ["style", "css"] 
+                {
+                    test: /\.css$/,
+                    loaders: ["style", "css"]
                 },
                 {
                     test: /\.scss$/,
@@ -41,32 +87,70 @@ gulp.task("default", function ()
                 }
             ]
         }
-    }
-        
-    var webpackTask = map(["bin/js/blog/blog-post.js", "bin/js/nav.js"], src =>
+    };
+    
+    return task
+        .pipe(gulp.dest(outputPath)) //webpack-stream bug, files must exist on disk: https://github.com/shama/webpack-stream/issues/72
+        .pipe(gulpForeach((stream, file) =>
+        {
+            // Using gulp-foreach to modify webpack options and prevent webpack from renaming all files
+            // to its rando hashes.
+            
+            const filepath = path.parse(file.path);
+            const options = merge({}, webpackOptions, {
+                output: {
+                    filename: filepath.name + ".min.js",
+                }
+            });
+            
+            return stream
+                .pipe(webpack(options))
+                .pipe(minifyJs(uglifyOptions).on("error", gutil.log))
+                .pipe(gulp.dest(filepath.dir));
+        }));
+}
+
+gulp.task("sass", function () 
+{
+    return sassTask(gulp.src(sassFiles));
+});
+
+gulp.task("ts:browser", function ()
+{
+    return tsTask("browser", gulp.src(tsBrowserFiles));
+});
+
+gulp.task("ts:server", () =>
+{
+    return tsTask("server", gulp.src(tsServerFiles));
+});
+
+gulp.task("default", ["sass", "ts:server", "ts:browser"]);
+
+gulp.task("watch", ["default"], (cb) => 
+{        
+    server.listen({path: "bin/server.js"});
+    
+    gulp.watch(sassFiles, (event) => 
     {
-        const filepath = path.parse(src);
-        const options = merge({}, webpackOptions, {
-            output: {
-                filename: filepath.name + ".min.js",
-            }
-        });
+        console.log('Sass file ' + event.path + ' was changed.');
         
-        return gulp.src(src)
-            .pipe(webpack(options))
-            .pipe(minifyJs(uglifyOptions).on("error", gutil.log))
-            .pipe(gulp.dest("wwwroot/js/" + filepath.dir.replace("bin/js", "")))
+        return sassTask(gulp.src(event.path));
     });
     
-    var sassTask = gulp.src(['css/**/*.scss', "css/*.scss"])
-        .pipe(sass())
-        .pipe(autoprefix())
-        .pipe(minifyCss(cssMinOptions))
-        .pipe(rename(function (path) 
-        {
-            path.extname = ".min.css";
-        }))
-        .pipe(gulp.dest('wwwroot/css'));        
+    gulp.watch(["bin/*.js", "bin/**/*.js"], server.restart);
+    
+    gulp.watch(tsServerFiles, (event) =>
+    {
+        console.log('TS server file ' + event.path + ' was changed.');
         
-    return mergeTasks(webpackTask.concat([sassTask]));
+        return tsTask("server", gulp.src(event.path), event.path);
+    });
+    
+    gulp.watch(tsBrowserFiles, (event) =>
+    {
+        console.log('TS browser file ' + event.path + ' was changed.');
+        
+        return tsTask("browser", gulp.src(event.path), event.path);
+    });
 });

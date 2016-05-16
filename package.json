@@ -5,7 +5,8 @@
   "main": "bin/server.js",
   "scripts": {
     "test": "echo 'NO TESTS FOUND'",
-    "build": "tsc -p tsconfig.json && tsc -p js/tsconfig.json && gulp",
+    "watch": "gulp watch",
+    "build": "gulp",
     "start": "node bin/server.js"
   },
   "repository": {
@@ -32,9 +33,12 @@
     "gulp-clean": "^0.3.2",
     "gulp-clean-css": "^2.0.6",
     "gulp-concat": "^2.6.0",
+    "gulp-develop-server": "^0.5.1",
+    "gulp-foreach": "^0.1.0",
     "gulp-rename": "^1.2.2",
     "gulp-sass": "^2.3.1",
     "gulp-sequence": "^0.4.5",
+    "gulp-typescript": "^2.13.4",
     "gulp-uglify": "^1.5.3",
     "merge2": "^1.0.2",
     "script-loader": "^0.7.0",
