@@ -103,6 +103,8 @@ async function startServer()
             return (reply.view("errors/error.js", props)).code(payload.statusCode);
         }
         
+        request.response.header("X-POWERED-BY", "Fuselage");
+        
         return reply.continue();
     }); 
     
