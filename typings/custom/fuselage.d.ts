@@ -13,3 +13,8 @@ export interface BlogPost extends BlogPostSummary
 {
     content: string;
 }
+
+export interface FuselageConfig
+{
+    
+}
