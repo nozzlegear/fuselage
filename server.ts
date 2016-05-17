@@ -23,6 +23,7 @@ const posts: BlogPostSummary[] = require(path.join(__dirname, "../", "posts/inde
 const inert = require("inert"); //Inert gives Hapi static file and directory handling via reply.file and reply.directory.
 const vision = require("vision"); //Vision gives Hapi dynamic view rendering.
 const yar = require("yar"); //Yar is a cookie management plugin for Hapi.
+const hapiAsync = require("hapi-async-handler"); //Adds async support to Hapi route handlers.
 const reactViewEngine = require("hapi-react-views");
 const npmPackage = require(path.join(__dirname, "../", "package.json"));
 
@@ -42,6 +43,7 @@ async function registerPlugins()
 {
     await server.register(inert);
     await server.register(vision);
+    await server.register(hapiAsync);
     await server.register({
         register: yar,
         options: {
@@ -96,8 +98,8 @@ async function startServer()
                 title: payload.error
             };
             
-            console.log(`${payload.statusCode} ${payload.error} for ${request.url.pathname}. ${payload.message}.`);
-            
+            console.log(`${payload.statusCode} ${payload.error} for ${request.url.pathname}. ${resp.message}.`, payload.statusCode >= 500 ? util.inspect(resp) : "");
+
             return (reply.view("errors/error.js", props)).code(payload.statusCode);
         }
         

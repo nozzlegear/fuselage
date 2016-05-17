@@ -37,7 +37,7 @@ export default function BlogPostPage(props: IProps)
     
     return (
         <Layout {...props} css={css} scripts={scripts}>
-            <main className="page-main" id="blog-post">
+            <section className="page-main" id="blog-post">
                 <h1 className="page-title">
                     {props.post.title}
                 </h1>
@@ -58,7 +58,7 @@ export default function BlogPostPage(props: IProps)
                 <div className="back">
                     <a href="/blog">Click here to head back to the blog.</a>
                 </div>
-            </main>
+            </section>
         </Layout>
     )
 }

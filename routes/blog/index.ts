@@ -19,13 +19,17 @@ export function registerRoute(server: Server)
     server.route({
         method: "GET",
         path: "/blog",
-        handler: (request, reply) => getBlogIndex(server, request, reply)
+        handler: {
+            async: async (request, reply) => await getBlogIndex(server, request, reply)
+        }
     });
     
     server.route({
         method: "GET",
         path: "/blog/{url}",
-        handler: (request, reply) => getBlogPost(server, request, reply)
+        handler: {
+            async: async (request, reply) => await getBlogPost(server, request, reply)
+        }
     });
 }
 
@@ -48,7 +52,7 @@ export async function getBlogIndex(server: Server, request: Request, reply: IRep
         metaDescription: "Blog Posts"
     };
     
-    return reply.view("blog/blog-index.js", props);
+    return reply.view("blog/index.js", props);
 }
 
 export async function getBlogPost(server: Server, request: Request, reply: IReply)
@@ -70,7 +74,7 @@ export async function getBlogPost(server: Server, request: Request, reply: IRepl
     {
         try
         {
-            const fileContent = await readFile( resolvePath(__dirname, "../../posts/markdown", postSummary.filename));
+            const fileContent = await readFile( resolvePath(server.app.rootDir, "../posts/markdown", postSummary.filename));
             
             postContent = {
                 filename: postSummary.filename,
@@ -100,5 +104,5 @@ export async function getBlogPost(server: Server, request: Request, reply: IRepl
         metaDescription: post.description
     };
     
-    return reply.view("blog/blog-post.js", props);
+    return reply.view("blog/post.js", props);
 }

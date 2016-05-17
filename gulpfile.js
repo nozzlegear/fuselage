@@ -144,10 +144,16 @@ gulp.task("watch", ["default"], (cb) =>
     {
         console.log('Sass file ' + event.path + ' was changed.');
         
+        if (event.path.indexOf("_variables.scss") > -1)
+        {
+            //Recompile all sass files with updated variables.
+            return sassTask(gulp.src(sassFiles));
+        }
+        
         return sassTask(gulp.src(event.path));
     });
     
-    gulp.watch(["bin/*.js", "bin/**/*.js"], server.restart);
+    gulp.watch(["bin/*.js", "bin/**/*.js", "posts/index.json", "posts/markdown/*.md"], server.restart);
     
     gulp.watch(tsServerFiles, (event) =>
     {

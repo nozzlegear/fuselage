@@ -41,6 +41,7 @@ export default function Head(props: IProps)
                 props.skipCommonCss ? null :
                 
                 [
+                    <link key={uniqueId()} href="/wwwroot/css/nav.min.css" rel="stylesheet" />,
                     <link key={uniqueId()} href="/wwwroot/css/theme.min.css" rel="stylesheet" />
                 ]
             }

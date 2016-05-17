@@ -1,3 +1,5 @@
+@import "variables";
+
 $navMaxWidth: 991px;
 $navMinWidth: 992px;
 
@@ -12,12 +14,16 @@ html.js-nav-active {
 nav#header-nav {
     margin: 0;
     width: 100%;
-    max-width: 1170px;
     border: none;
     background: #fff;
     padding: 10px 0;
     display: flex;
     min-height: 66px;
+    border-bottom: 1px solid #bbb;
+    
+    a{
+        text-decoration: none;
+    }
 
     @media all and (min-width: $navMinWidth) {
         align-items: center;

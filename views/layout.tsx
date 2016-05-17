@@ -46,9 +46,9 @@ export default function Layout(props: LayoutProps)
                     </menu>
                 </div>
             </nav>
-            <div id="body">
+            <main id="container">
                 {props.children}
-            </div>
+            </main>
             <footer id="footer">
                 <p>
                     {`© ${props.appName}, ${new Date().getUTCFullYear()}. All rights reserved.`}

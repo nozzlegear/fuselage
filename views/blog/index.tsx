@@ -40,7 +40,7 @@ export default function BlogIndex(props: IProps)
     
     return (
         <Layout {...props} css={css}>
-            <main className="page-main" id="blog-index">
+            <section className="page-main" id="blog-index">
                 {posts}
                 <div className="pagination">
                     <div className="left">
@@ -67,7 +67,7 @@ export default function BlogIndex(props: IProps)
                         }
                     </div>
                 </div>
-            </main>
+            </section>
         </Layout>
     );
 }

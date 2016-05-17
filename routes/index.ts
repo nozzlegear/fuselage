@@ -2,10 +2,10 @@
 
 import {registerRoute as blogRoutes} from "./blog";
 import {registerRoute as homeRoutes} from "./home";
-import {registerRoute as wwwrootRoutes} from "./wwwroot";
+import {registerRoute as assetsRoutes} from "./assets";
 
 export const RoutesToRegister = [
     blogRoutes,
     homeRoutes,
-    wwwrootRoutes
+    assetsRoutes
 ];

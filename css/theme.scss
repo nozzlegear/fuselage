@@ -1,3 +1,4 @@
+@import "variables";
 @import url(https://fonts.googleapis.com/css?family=Open+Sans:300,400,600);
 
 body {
@@ -30,4 +31,11 @@ h1, h2, h3, h4, h5, h6
 .text-left
 {
     text-align: left;
+}
+
+main#container //Main page container
+{
+    max-width: $maxContainerWidth;
+    margin: 0 auto;
+    padding: 0 2rem;
 }
