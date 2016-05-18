@@ -44,7 +44,7 @@ export async function getBlogIndex(server: Server, request: Request, reply: IRep
     const totalPages = totalPosts % postsPerPage > 0 ? Math.floor(totalPosts / postsPerPage) + 1 : totalPosts / postsPerPage; 
     
     const props: BlogIndexProps = {
-        title: `Blog Posts`,
+        title: server.app.blogDescription,
         blogLinkClass: "active",
         currentPage: currentPage,
         totalPages: totalPages,

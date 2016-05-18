@@ -15,7 +15,8 @@ export default function BlogPostPage(props: IProps)
         "/wwwroot/js/blog/blog-post.min.js"
     ];
     const css = [
-        "/wwwroot/css/post.min.css"
+        "/wwwroot/css/post.min.css",
+        "/wwwroot/css/github-syntax-highlight.min.css"
     ];
     
     const shareUrl = `https://DOMAIN.com/blog/${props.post.url}`;
@@ -38,9 +39,6 @@ export default function BlogPostPage(props: IProps)
     return (
         <Layout {...props} css={css} scripts={scripts}>
             <section className="page-main" id="blog-post">
-                <h1 className="page-title">
-                    {props.post.title}
-                </h1>
                 <h4 className="post-meta">
                     {"by AUTHOR NAME"}
                 </h4>

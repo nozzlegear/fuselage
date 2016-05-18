@@ -62,9 +62,16 @@ async function startServer()
 {
     await registerPlugins();
     
+    //Configure the server's app state
+    server.app.posts = posts || [];
+    server.app.postContents = [];
+    server.app.rootDir = __dirname;
+    server.app.blogDescription = "My Fuselage Blog";
+    
     const isLive = process.env.NODE_ENV === "production";
     const defaultViewContext = {
-        appName: "Fuselage"
+        appName: "Fuselage",
+        blogDescription: server.app.blogDescription,
     }
     
     //Set the viewengine to use react as its view engine.
@@ -78,10 +85,6 @@ async function startServer()
         context: defaultViewContext
     });
     
-    //Configure the server's app state
-    server.app.posts = posts || [];
-    server.app.postContents = [];
-    server.app.rootDir = __dirname;
     
     //Filter all responses to check if they have an error. If so, render the error page.
     server.ext("onPreResponse", (request, reply) =>

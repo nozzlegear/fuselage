@@ -18,7 +18,7 @@ export default function BlogIndex(props: IProps)
 {
     const showNewerButton = (props.currentPage - 1) > 0;
     const showOlderButton = (props.currentPage + 1) <= props.totalPages;
-    const css = ["/wwwroot/css/post/post.min.css"];
+    const css = ["/wwwroot/css/post.min.css", "/wwwroot/css/github-syntax-highlight.min.css"];
     
     const posts = map(props.posts || [], post => (
         <article key={uniqueId()} className="post">

@@ -1,8 +1,5 @@
 @import "variables";
 
-$navMaxWidth: 991px;
-$navMinWidth: 992px;
-
 html.js-nav-active {
     nav#header-nav {
         .brand {
@@ -13,27 +10,32 @@ html.js-nav-active {
 
 nav#header-nav {
     margin: 0;
+    display: block;
     width: 100%;
     border: none;
     background: #fff;
-    padding: 10px 0;
-    display: flex;
-    min-height: 66px;
-    border-bottom: 1px solid #bbb;
+    padding: 1rem 0;
     
     a{
         text-decoration: none;
     }
 
-    @media all and (min-width: $navMinWidth) {
-        align-items: center;
-    }
+    .container {
+        display: flex;
+        min-height: 66px;
+        max-width: $maxContainerWidth;
+        margin: 0 auto;
 
-    @media all and (max-width: $navMaxWidth) {
-        -ms-flex-direction: column;
-        -webkit-flex-direction: column;
-        flex-direction: column;
-    }    
+        @media all and (min-width: $navMinWidth) {
+            align-items: center;
+        }
+
+        @media all and (max-width: $navMaxWidth) {
+            -ms-flex-direction: column;
+            -webkit-flex-direction: column;
+            flex-direction: column;
+        }
+    }
 
     .brand {
         display: flex;

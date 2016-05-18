@@ -19,3 +19,13 @@ var nav = responsiveNav("#collapsible", {
     open: function () { }, // Function: Open callback
     close: function () { } // Function: Close callback
 });
+
+if('CSS' in window && 'supports' in window['CSS']) 
+{
+    let support = window['CSS'].supports('background-blend-mode','soft-light');
+        
+    if (support)
+    {
+        document.body.classList.add("supports-background-blend-mode")
+    }
+}
