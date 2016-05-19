@@ -120,13 +120,41 @@ section#blog-post, section#blog-index
         align-self: center;
     }
 
-    .post 
+    .post, .post-excerpt
     {
         margin: 0 auto;
         padding-bottom: 4rem;
         
-        &:first-child {
+        &:first-child 
+        {
             margin-top: 0;
+        }
+        
+        &.post-excerpt 
+        {
+            border-bottom: 1px solid #EBF2F6;
+            padding: 5rem 0;
+            
+            &:first-child
+            {
+                padding-top: 0;
+            }
+            
+            p
+            {
+                line-height: 1.6em;
+                margin: 0;
+            }
+            
+            .post-title
+            {
+                font-size: 4rem;
+                line-height: 1.2em;
+                letter-spacing: -1px;
+                text-indent: -2px;
+                margin: 0 0 2rem 0;
+                padding: 0;
+            }
         }
 
         a 
@@ -186,22 +214,6 @@ section#blog-post, section#blog-index
             border: 0;
             border-top: 1px solid rgba(6,8,8,.12);
             border-bottom: 1px solid rgba(255,255,255,.15);
-        }
-
-        .post h2.post-title {
-            font-size: 4rem;
-            line-height: 1.2em;
-            letter-spacing: -1px;
-            text-indent: -2px;
-            margin: 0;
-        }
-
-        &.post-excerpt 
-        {
-            p
-            {
-                line-height: 1.6em;
-            }
         }
 
         img {

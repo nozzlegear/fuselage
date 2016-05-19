@@ -21,20 +21,16 @@ export default function BlogIndex(props: IProps)
     const css = ["/wwwroot/css/post.min.css", "/wwwroot/css/github-syntax-highlight.min.css"];
     
     const posts = map(props.posts || [], post => (
-        <article key={uniqueId()} className="post">
-            <div className="post-header">
-                <span className="post-meta">
-                    by {"Joshua Harms"}
-                </span>
-                <h2 className="post-title">
-                    <a href={`/blog/${post.url}`}>
-                        {post.title}
-                    </a>
-                </h2>
-            </div>
-            <div className="post-excerpt">
-                <p>{post.description}</p>
-            </div>
+        <article key={uniqueId()} className="post-excerpt">
+            <span className="post-meta">
+                by {"AUTHOR NAME"}
+            </span>
+            <h2 className="post-title excerpt-title">
+                <a href={`/blog/${post.url}`}>
+                    {post.title}
+                </a>
+            </h2>
+            <p>{post.description}</p>
         </article>
     ));
     
