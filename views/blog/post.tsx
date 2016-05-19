@@ -16,7 +16,6 @@ export default function BlogPostPage(props: IProps)
     ];
     const css = [
         "/wwwroot/css/post.min.css",
-        "/wwwroot/css/github-syntax-highlight.min.css"
     ];
     
     const shareUrl = `https://DOMAIN.com/blog/${props.post.url}`;
@@ -42,17 +41,19 @@ export default function BlogPostPage(props: IProps)
                 <h4 className="post-meta">
                     {"by AUTHOR NAME"}
                 </h4>
-                <article dangerouslySetInnerHTML={{__html: props.post.content}} />
-                <div className="author">
-                    <h4>{"AUTHOR NAME"}</h4>
-                    <p>
-                        {'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec at erat maximus turpis mollis vestibulum.'}
-                    </p>
-                    <p>
-                        {"Phasellus velit arcu, accumsan pretium gravida vitae, dictum faucibus sem. "}
-                    </p>
+                <article className="post" dangerouslySetInnerHTML={{__html: props.post.content}} />
+                <div className="post-footer">
+                    <div className="author">
+                        <h4>{"AUTHOR NAME"}</h4>
+                        <p>
+                            {'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec at erat maximus turpis mollis vestibulum.'}
+                        </p>
+                        <p>
+                            {"Phasellus velit arcu, accumsan pretium gravida vitae, dictum faucibus sem. "}
+                        </p>
+                    </div>
+                    {share}
                 </div>
-                {share}
                 <div className="back">
                     <a href="/blog">Click here to head back to the blog.</a>
                 </div>

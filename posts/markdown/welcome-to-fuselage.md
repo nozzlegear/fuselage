@@ -1,6 +1,6 @@
 <!-- All credit for introduction post goes to https://ghost.org -->
 
-You're live! Nice. We've put together a little post to introduce you to Fuselage's markdown system and get you started. You can manage your content with the /posts/index.json file in your project's root folder. 
+You're live! Nice. We've put together a little post to introduce you to Fuselage's markdown system and get you started. You can manage your content with the `/posts/index.json` file in your project's root folder. 
 
 ## Getting Started
 
@@ -37,12 +37,14 @@ Sometimes a link isn't enough, you want to quote someone on what they've said.
 
 ### Working with Code
 
-Got a streak of geek? We've got you covered there, too. You can write inline `<code>` blocks really easily with back ticks. Want to show off something more comprehensive? 4 spaces of indentation gets you there.
+Got a streak of geek? We've got you covered there, too. You can write inline `<code>` blocks really easily with back ticks. Want to show off something more comprehensive? Use a 'fence' of 3 back ticks.
 
-    .awesome-thing {
-        display: block;
-        width: 100%;
-    }
+```css
+.awesome-thing {
+    display: block;
+    width: 100%;
+}
+```
 
 ### Ready for a Break? 
 

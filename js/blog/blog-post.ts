@@ -1,24 +1,27 @@
 /// <reference path="./../../typings/main.d.ts" />
 
-var highlighter: { initHighlightingOnLoad(): void; } = require("highlightjs/highlight.pack.js");
+//Load highlight.js' css into the body.
+require("highlightjs/styles/vs.css");
+ 
+const highlighter: { initHighlightingOnLoad(): void; } = require("highlightjs/highlight.pack.js");
 
 highlighter.initHighlightingOnLoad();
 
 {
     //Server-rendered react views cannot wire up event listeners. 
     //This script will open a share window when clicking the share links on a blog post.
-    var handleShare = (href: string, event: MouseEvent) =>
+    const handleShare = (href: string, event: MouseEvent) =>
     {
         event.preventDefault();
         
         window.open(href, "share", 'width=550,height=250');  
     };
     
-    var anchors = document.querySelectorAll(".share > a");
+    const anchors = document.querySelectorAll(".share > a");
     
-    for (var i = 0; i < anchors.length; i ++)
+    for (let i = 0; i < anchors.length; i ++)
     {
-        var anchor = anchors[i];
+        const anchor = anchors[i];
         
         anchor.addEventListener("click", handleShare.bind(anchor, anchor["href"]));
     }

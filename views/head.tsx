@@ -23,6 +23,9 @@ export default function Head(props: IProps)
 {
     const links = map(props.css, link => <link key={uniqueId()} href={link} rel="stylesheet" />);
     
+    //A custom fontawesome script allows async icon loading and accessibility best practices. Must be in the head.
+    const customFontAwesome = <script key={uniqueId()} src="https://use.fontawesome.com/47ceb506ad.js"></script>;
+
     return (
         <head>
             <title>{props.title} | {props.appName}</title>
@@ -42,7 +45,9 @@ export default function Head(props: IProps)
                 
                 [
                     <link key={uniqueId()} href="/wwwroot/css/nav.min.css" rel="stylesheet" />,
-                    <link key={uniqueId()} href="/wwwroot/css/theme.min.css" rel="stylesheet" />
+                    <link key={uniqueId()} href="/wwwroot/css/theme.min.css" rel="stylesheet" />,
+                    customFontAwesome
+
                 ]
             }
             
