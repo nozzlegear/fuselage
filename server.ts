@@ -1,4 +1,4 @@
-/// <reference path="./typings/main.d.ts" />
+/// <reference path="./typings/index.d.ts" />
 
 import * as Hapi from "hapi";
 import * as joi from "joi";
@@ -6,6 +6,7 @@ import * as boom from "boom";
 import * as path from "path";
 import * as util from "util";
 import uri = require('jsuri');
+import {FuselageServer, FuselageConfig} from "fuselage";  
 import {every as all, clone, find, some, merge, filter, map, isArray, isError} from "lodash";
 
 //Import routes
@@ -16,8 +17,9 @@ import {LayoutProps} from "./views/layout";
 import {BlogPostSummary, BlogPost} from "fuselage";
 import {IProps as ErrorPageProps} from "./views/errors/error";
 
-//Import the post index
+//Import the post index and Fuselage config
 const posts: BlogPostSummary[] = require(path.join(__dirname, "../", "posts/index.json"));
+const fuselage: FuselageConfig = require(path.join(__dirname, "../", "fuselage.json"));
 
 //Other imports
 const inert = require("inert"); //Inert gives Hapi static file and directory handling via reply.file and reply.directory.
@@ -28,7 +30,7 @@ const reactViewEngine = require("hapi-react-views");
 const npmPackage = require(path.join(__dirname, "../", "package.json"));
 
 //Prepare Hapi server
-const server = new Hapi.Server();
+const server: FuselageServer = new Hapi.Server();
 const config: Hapi.IServerConnectionOptions = {
     port: process.env.PORT || 3000,
     host: process.env.HOST || "localhost",
@@ -63,16 +65,13 @@ async function startServer()
     await registerPlugins();
     
     //Configure the server's app state
-    server.app.posts = posts || [];
-    server.app.postContents = [];
-    server.app.rootDir = __dirname;
-    server.app.blogDescription = "My Fuselage Blog";
+    server.app = merge({}, fuselage, {
+        posts: posts || [],
+        postContents: [],
+        rootDir: __dirname
+    });
     
     const isLive = process.env.NODE_ENV === "production";
-    const defaultViewContext = {
-        appName: "Fuselage",
-        blogDescription: server.app.blogDescription,
-    }
     
     //Set the viewengine to use react as its view engine.
     server.views({
@@ -82,7 +81,7 @@ async function startServer()
         compileOptions:{},
         relativeTo: path.resolve(__dirname),
         path: "views",
-        context: defaultViewContext
+        context: fuselage
     });
     
     
@@ -93,13 +92,13 @@ async function startServer()
         {
             const resp: Boom.BoomError = request.response as any;
             const payload: { error: string, message: string, statusCode: number } = resp.output.payload;
-            const props: ErrorPageProps = {
+            const props: ErrorPageProps = merge({
                 errorType: payload.error,
                 message: payload.message,
                 statusCode: payload.statusCode,
                 metaDescription: undefined,
                 title: payload.error
-            };
+            }, fuselage);
             
             console.log(`${payload.statusCode} ${payload.error} for ${request.url.pathname}. ${resp.message}.`, payload.statusCode >= 500 ? util.inspect(resp) : "");
 

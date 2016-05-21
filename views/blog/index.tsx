@@ -1,9 +1,9 @@
-/// <reference path="./../../typings/main.d.ts" />
+/// <reference path="./../../typings/index.d.ts" />
 
 import * as React from "react";
 import {map, uniqueId} from "lodash";
-import {BlogPostSummary} from "fuselage";
 import Layout, {LayoutProps} from "../layout";
+import {BlogPostSummary, FuselageConfig} from "fuselage";
 
 export interface IProps extends LayoutProps
 {
@@ -14,7 +14,7 @@ export interface IProps extends LayoutProps
     totalPages: number;
 }
 
-export default function BlogIndex(props: IProps) 
+export default function BlogIndex(props: IProps & FuselageConfig) 
 {
     const showNewerButton = (props.currentPage - 1) > 0;
     const showOlderButton = (props.currentPage + 1) <= props.totalPages;
@@ -23,7 +23,7 @@ export default function BlogIndex(props: IProps)
     const posts = map(props.posts || [], post => (
         <article key={uniqueId()} className="post-excerpt">
             <span className="post-meta">
-                by {"AUTHOR NAME"}
+                by {props.authorName}
             </span>
             <h2 className="post-title excerpt-title">
                 <a href={`/blog/${post.url}`}>
@@ -35,7 +35,7 @@ export default function BlogIndex(props: IProps)
     ));
     
     return (
-        <Layout {...props} css={css}>
+        <Layout {...props} css={css} customHeroTitle={props.blogIndexHeader}>
             <section className="page-main" id="blog-index">
                 {posts}
                 <div className="pagination">

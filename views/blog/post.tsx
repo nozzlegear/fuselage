@@ -1,15 +1,21 @@
-/// <reference path="./../../typings/main.d.ts" />
+/// <reference path="./../../typings/index.d.ts" />
 
 import * as React from "react";
 import {BlogPost} from "fuselage";
 import Layout, {LayoutProps} from "../layout";
+import {FuselageConfig} from "fuselage";
 
 export interface IProps extends LayoutProps
 {
     post: BlogPost;
+    requestUrl: {
+        hostname: string,
+        protocol: string;
+        path: string;
+    }
 }
 
-export default function BlogPostPage(props: IProps)
+export default function BlogPostPage(props: IProps & FuselageConfig)
 {
     const scripts = [
         "/wwwroot/js/blog/blog-post.min.js"
@@ -18,12 +24,12 @@ export default function BlogPostPage(props: IProps)
         "/wwwroot/css/post.min.css",
     ];
     
-    const shareUrl = `https://DOMAIN.com/blog/${props.post.url}`;
+    const shareUrl = `${props.requestUrl.protocol}://${props.requestUrl.hostname}/blog/${props.post.url}`;
 
     const share = (
         <div className="share">
             <h4>Share this post</h4>
-            <a className="icon-twitter" href={`https://twitter.com/share?text=${`${encodeURIComponent(props.post.title)} - via @TWITTERHANDLE - `}&url=${shareUrl}`}>
+            <a className="icon-twitter" href={`https://twitter.com/share?text=${`${encodeURIComponent(props.post.title)}${props.authorTwitterUsername ? ` - via @${props.authorTwitterUsername} -` : ""}`}&url=${shareUrl}`}>
                 <i className="fa fa-twitter-square" />
             </a>
             <a className="icon-facebook" href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`}>
@@ -39,23 +45,20 @@ export default function BlogPostPage(props: IProps)
         <Layout {...props} css={css} scripts={scripts}>
             <section className="page-main" id="blog-post">
                 <h4 className="post-meta">
-                    {"by AUTHOR NAME"}
+                    {`by ${props.authorName}`}
                 </h4>
                 <article className="post" dangerouslySetInnerHTML={{__html: props.post.content}} />
                 <div className="post-footer">
                     <div className="author">
-                        <h4>{"AUTHOR NAME"}</h4>
+                        <h4>{props.authorName}</h4>
                         <p>
-                            {'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec at erat maximus turpis mollis vestibulum.'}
-                        </p>
-                        <p>
-                            {"Phasellus velit arcu, accumsan pretium gravida vitae, dictum faucibus sem. "}
+                            {props.authorDescription}
                         </p>
                     </div>
                     {share}
                 </div>
                 <div className="back">
-                    <a href="/blog">Click here to head back to the blog.</a>
+                    <a href={props.blogIndexAtHome ? "/" : "/blog"}>Click here to head back to the blog.</a>
                 </div>
             </section>
         </Layout>

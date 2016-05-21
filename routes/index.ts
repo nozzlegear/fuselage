@@ -1,4 +1,4 @@
-/// <reference path="./../typings/main.d.ts" />
+/// <reference path="./../typings/index.d.ts" />
 
 import {registerRoute as blogRoutes} from "./blog";
 import {registerRoute as homeRoutes} from "./home";

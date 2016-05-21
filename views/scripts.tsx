@@ -1,4 +1,4 @@
-/// <reference path="./../typings/main.d.ts" />
+/// <reference path="./../typings/index.d.ts" />
 
 import * as React from "react";
 import {map, uniqueId} from "lodash";
@@ -13,7 +13,7 @@ export interface IProps extends React.Props<any>
 
 export default function Scripts(props: IProps)
 {
-    const scripts = map(props.scripts, script => <script src={script} />)
+    const scripts = map(props.scripts, script => <script key={uniqueId()} src={script} />)
     
     return (
         <div className="hide">

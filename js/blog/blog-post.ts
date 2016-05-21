@@ -1,4 +1,4 @@
-/// <reference path="./../../typings/main.d.ts" />
+/// <reference path="./../../typings/index.d.ts" />
 
 //Load highlight.js' css into the body.
 require("highlightjs/styles/vs.css");

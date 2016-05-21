@@ -1,0 +1,10 @@
+{
+    "appName": "Fuselage",
+    "blogTitle" : "My Fuselage Blog",
+    "blogIndexHeader" : "Fuselage: a simple blog for developers.",
+    "blogIndexAtHome" : false,
+    "themeColor" : "#256792",
+    "authorName" : "Author",
+    "authorTwitterUsername" : "",
+    "authorDescription" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec at erat maximus turpis mollis vestibulum."
+}

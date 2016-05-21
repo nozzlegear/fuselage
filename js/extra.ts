@@ -1,4 +1,4 @@
-/// <reference path="./../typings/main.d.ts" />
+/// <reference path="./../typings/index.d.ts" />
 
 require("script!responsive-nav/client/dist/responsive-nav.js");
 require("responsive-nav/client/dist/styles/responsive-nav.css");
@@ -20,6 +20,7 @@ var nav = responsiveNav("#collapsible", {
     close: function () { } // Function: Close callback
 });
 
+//Ensure the browser supports background-blend-mode. If so, blend the blog's header image.
 if('CSS' in window && 'supports' in window['CSS']) 
 {
     let support = window['CSS'].supports('background-blend-mode','soft-light');

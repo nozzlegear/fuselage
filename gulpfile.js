@@ -20,7 +20,7 @@ const merge = require("lodash").merge;
 const server = require("gulp-develop-server");
 
 const tsBrowserFiles = ["js/**/*.ts"];
-const tsServerFiles = ["server.ts", "routes/**/*.ts", "views/**/*.{ts,tsx}"];
+const tsServerFiles = ["server.ts", "modules/**/*.ts", "routes/**/*.ts", "views/**/*.{ts,tsx}"];
 const sassFiles = ['css/**/*.scss', "css/*.scss"];
 
 const findTsDir = (desiredFolder, filepath) =>
@@ -153,7 +153,7 @@ gulp.task("watch", ["default"], (cb) =>
         return sassTask(gulp.src(event.path));
     });
     
-    gulp.watch(["bin/*.js", "bin/**/*.js", "posts/index.json", "posts/markdown/*.md"], server.restart);
+    gulp.watch(["bin/*.js", "bin/**/*.js", "posts/index.json", "posts/markdown/*.md", "fuselage.json"], server.restart);
     
     gulp.watch(tsServerFiles, (event) =>
     {

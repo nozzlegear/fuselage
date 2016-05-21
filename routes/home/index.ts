@@ -1,16 +1,23 @@
-/// <reference path="./../../typings/main.d.ts" />
+/// <reference path="./../../typings/index.d.ts" />
 
-import {Server} from "hapi";
+import {IReply} from "hapi";
+import {getBlogIndex} from "./../blog";
+import {FuselageServer as Server} from "fuselage";
 
 export function registerRoute(server: Server)
 {
+    let indexHandler: any = (request, reply: IReply) => reply.redirect("/blog").temporary(true);
+    
+    if (server.app.blogIndexAtHome)
+    {
+        indexHandler = {
+            async: async (request, reply) => await getBlogIndex(server, request, reply)
+        };
+    }
+    
     server.route({
         method: "GET",
         path: "/",
-        handler: (request, reply) =>
-        {
-            // TODO: Read a config setting to determine whether blog index should be displayed at / or /blog
-            return reply.redirect("/blog").temporary(true);
-        }
+        handler: indexHandler
     })
 }

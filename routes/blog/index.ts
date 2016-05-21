@@ -1,27 +1,34 @@
-/// <reference path="./../../typings/main.d.ts" />
+/// <reference path="./../../typings/index.d.ts" />
 
 import * as fs from "fs";
 import * as boom from "boom";
 import * as md from "markdown-it";
 import * as bluebird from "bluebird";
+import {Request, IReply} from "hapi";
 import {resolve as resolvePath} from "path"
-import {Server, Request, IReply} from "hapi";
 import {clone, find, merge, some} from "lodash";
-import {BlogPostSummary, BlogPost} from "fuselage";
+import {GetRequestUrl} from "./../../modules/utils";
 import {IProps as BlogPostProps} from "./../../views/blog/post";
 import {IProps as BlogIndexProps} from "./../../views/blog/index";
+import {BlogPostSummary, BlogPost, PostContent, FuselageServer as Server} from "fuselage";
 
 const readFile = bluebird.promisify(fs.readFile);
-type PostContent = {filename: string, parsedContent: string};
 
 export function registerRoute(server: Server)
 {
+    let indexHandler: any = {
+        async: async (request, reply) => await getBlogIndex(server, request, reply)
+    }; 
+    
+    if (server.app.blogIndexAtHome)
+    {
+        indexHandler = (request, reply: IReply) => reply.redirect("/").temporary(true);
+    }
+    
     server.route({
         method: "GET",
         path: "/blog",
-        handler: {
-            async: async (request, reply) => await getBlogIndex(server, request, reply)
-        }
+        handler: indexHandler
     });
     
     server.route({
@@ -44,12 +51,12 @@ export async function getBlogIndex(server: Server, request: Request, reply: IRep
     const totalPages = totalPosts % postsPerPage > 0 ? Math.floor(totalPosts / postsPerPage) + 1 : totalPosts / postsPerPage; 
     
     const props: BlogIndexProps = {
-        title: server.app.blogDescription,
+        title: server.app.blogTitle,
         blogLinkClass: "active",
         currentPage: currentPage,
         totalPages: totalPages,
         posts: pagePosts,
-        metaDescription: "Blog Posts"
+        metaDescription: "Blog Posts",
     };
     
     return reply.view("blog/index.js", props);
@@ -101,7 +108,8 @@ export async function getBlogPost(server: Server, request: Request, reply: IRepl
         post: post, 
         title: post.title, 
         blogLinkClass: "active",
-        metaDescription: post.description
+        metaDescription: post.description,
+        requestUrl: GetRequestUrl(request)
     };
     
     return reply.view("blog/post.js", props);

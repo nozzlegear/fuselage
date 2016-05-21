@@ -1,13 +1,12 @@
-/// <reference path="./../typings/main.d.ts" />
+/// <reference path="./../typings/index.d.ts" />
 
 import * as React from "react";
 import {uniqueId, map} from "lodash";
+import {FuselageConfig} from "fuselage";
 
 export interface IProps extends React.Props<any>
 {
     title: string;
-    
-    appName?: string;
     
     metaDescription: string;
     
@@ -19,7 +18,7 @@ export interface IProps extends React.Props<any>
     css?: string[];
 }
 
-export default function Head(props: IProps)
+export default function Head(props: IProps & FuselageConfig)
 {
     const links = map(props.css, link => <link key={uniqueId()} href={link} rel="stylesheet" />);
     

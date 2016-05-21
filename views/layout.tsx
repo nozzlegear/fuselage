@@ -1,23 +1,24 @@
-/// <reference path="./../typings/main.d.ts" />
+/// <reference path="./../typings/index.d.ts" />
 
 import * as React from "react";
 import {map, uniqueId, clone} from "lodash";
 import ImageHero from "./_components/image-hero";
-import LayoutScripts, {IProps as ScriptProps} from "./scripts";
 import LayoutHead, {IProps as HeadProps} from "./head"
+import {FuselageConfig} from "fuselage";
+import LayoutScripts, {IProps as ScriptProps} from "./scripts";
 
 export interface LayoutProps extends HeadProps, ScriptProps
 {   
-    blogDescription?: string;
-    
     scripts?: string[];
     
     sdhLinkClass?: string;
     
     blogLinkClass?: string;
+    
+    customHeroTitle?: string;
 }
 
-export default function Layout(props: LayoutProps)
+export default function Layout(props: LayoutProps & FuselageConfig)
 {       
     const headProps = clone(props);
     
@@ -43,15 +44,15 @@ export default function Layout(props: LayoutProps)
                     <div id="collapsible" className="collapsible">
                         <menu className="right">
                             <div className={props.blogLinkClass}>
-                                <a href="/blog">
-                                    {props.blogDescription}
+                                <a href={props.blogIndexAtHome ? "/" : "/blog"}>
+                                    {props.blogTitle}
                                 </a>
                             </div>
                         </menu>
                     </div>
                 </div>
             </nav>
-            <ImageHero title={props.title} />
+            <ImageHero title={props.customHeroTitle || props.title} themeColor={props.themeColor} />
             <main id="container">
                 {props.children}
             </main>

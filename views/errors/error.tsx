@@ -1,8 +1,9 @@
-/// <reference path="./../../typings/main.d.ts" />
+/// <reference path="./../../typings/index.d.ts" />
 
 import * as React from "react";
-import {LayoutProps} from "../layout";
 import LayoutHead from "../head";
+import {LayoutProps} from "../layout";
+import {FuselageConfig} from "fuselage";
 
 export interface IProps extends LayoutProps
 {
@@ -13,7 +14,7 @@ export interface IProps extends LayoutProps
     statusCode: number;
 }
 
-export default function ErrorPage(props: IProps)
+export default function ErrorPage(props: IProps & FuselageConfig)
 {
     const css = ".error {color: #fff;}.error h2 {font-size: 10em;text-align: center;}.error h3 {text-align: center;margin-bottom: 25px;} .error p.lead {text-align: center;}";
     const styles = ["/wwwroot/css/error.min.css"];
