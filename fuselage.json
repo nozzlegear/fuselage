@@ -2,7 +2,7 @@
     "appName": "Fuselage",
     "blogTitle" : "My Fuselage Blog",
     "blogIndexHeader" : "Fuselage: a simple blog for developers.",
-    "blogIndexAtHome" : false,
+    "blogIndexAtHome" : true,
     "themeColor" : "#256792",
     "authorName" : "Author",
     "authorTwitterUsername" : "",
