@@ -1,12 +1,12 @@
-@import "variables";
+@import "variables.styl";
 
 section#blog-post, section#blog-index
 {
     margin: 0 auto;
     
-    @media all and (min-width:$navMinWidth) {
+    @media all and (min-width: navMinWidth) {
         max-width: 83.33333333%;
-        padding: $containerPadding 0;
+        padding: containerPadding 0;
     }
     
     .post-meta
@@ -360,7 +360,7 @@ section#blog-post, section#blog-index
             }
         }
         
-        @media all and (max-width: $navMaxWidth / 1.5)
+        @media all and (max-width: navMaxWidth / 1.5)
         {
             display: block;
             

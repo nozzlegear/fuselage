@@ -1,11 +1,6 @@
-/// <reference path="./../typings/index.d.ts" />
+declare const responsiveNav: any;
 
-require("script!responsive-nav/client/dist/responsive-nav.js");
-require("responsive-nav/client/dist/styles/responsive-nav.css");
-
-declare var responsiveNav: any;
- 
-var nav = responsiveNav("#collapsible", {
+const nav = responsiveNav("#collapsible", {
     animate: false,
     label: "Menu", // String: Label for the navigation toggle
     insert: "before", // String: Insert the toggle before or after the navigation
@@ -21,12 +16,10 @@ var nav = responsiveNav("#collapsible", {
 });
 
 //Ensure the browser supports background-blend-mode. If so, blend the blog's header image.
-if('CSS' in window && 'supports' in window['CSS']) 
-{
-    let support = window['CSS'].supports('background-blend-mode','soft-light');
-        
-    if (support)
-    {
+if ('CSS' in window && 'supports' in window['CSS']) {
+    let support = window['CSS'].supports('background-blend-mode', 'soft-light');
+
+    if (support) {
         document.body.classList.add("supports-background-blend-mode")
     }
 }

@@ -1,116 +1,99 @@
-/// <reference path="./../../typings/index.d.ts" />
-
 import * as fs from "fs";
 import * as boom from "boom";
+import { resolve } from "path";
 import * as md from "markdown-it";
 import * as bluebird from "bluebird";
-import {Request, IReply} from "hapi";
-import {resolve as resolvePath} from "path"
-import {clone, find, merge, some} from "lodash";
-import {GetRequestUrl} from "./../../modules/utils";
-import {IProps as BlogPostProps} from "./../../views/blog/post";
-import {IProps as BlogIndexProps} from "./../../views/blog/index";
-import {BlogPostSummary, BlogPost, PostContent, FuselageServer as Server} from "fuselage";
+import { clone, find, merge, some } from "lodash";
+import { IProps as BlogPostProps } from "./../../views/blog/post";
+import { getCacheValue, setCacheValue } from "../../modules/cache";
+import { IProps as BlogIndexProps } from "./../../views/blog/index";
+import { BLOG_INDEX_AT_HOME, BLOG_TITLE, APP_ROOT } from "../../modules/constants";
+import { BlogPostSummary, BlogPost, PostContent, RouterFunction, RouteHandler } from "fuselage";
+export const summaries: BlogPostSummary[] = require(resolve(APP_ROOT, "./posts/index.json"));
 
 const readFile = bluebird.promisify(fs.readFile);
 
-export function registerRoute(server: Server)
-{
-    let indexHandler: any = {
-        async: async (request, reply) => await getBlogIndex(server, request, reply)
-    }; 
-    
-    if (server.app.blogIndexAtHome)
-    {
-        indexHandler = (request, reply: IReply) => reply.redirect("/").temporary(true);
-    }
-    
-    server.route({
-        method: "GET",
+export default function registerRoutes(route: RouterFunction) {
+    route({
+        method: "get",
         path: "/blog",
-        handler: indexHandler
-    });
-    
-    server.route({
-        method: "GET",
-        path: "/blog/{url}",
-        handler: {
-            async: async (request, reply) => await getBlogPost(server, request, reply)
+        sitemap: true,
+        handler: !BLOG_INDEX_AT_HOME ? getBlogIndex : async (req, res, next) => {
+            res.redirect(302 /* Temporary redirect */, "/");
+
+            return next();
         }
-    });
+    })
+
+    route({
+        method: "get",
+        path: "/blog/:url",
+        handler: async function (req, res, next) {
+            const url: string = req.params["url"] || "";
+            const postSummary = summaries.find(s => s.url.toLowerCase() === url.toLowerCase());
+
+            if (!postSummary) {
+                return next(boom.notFound("Page not found."));
+            }
+
+            const cachedContent = await getCacheValue<PostContent>("posts", postSummary.filename);
+            let postContent: PostContent = cachedContent && cachedContent.item || undefined;
+
+            if (!postContent) {
+                try {
+                    const fileContent = await readFile(resolve(APP_ROOT, "./posts/markdown", postSummary.filename));
+
+                    postContent = {
+                        filename: postSummary.filename,
+                        parsedContent: new md("commonmark").render(fileContent.toString("utf8")),
+                    };
+                }
+                catch (e) {
+                    let error: Error = e;
+
+                    console.error(error);
+
+                    const is404 = error.message.indexOf("no such file or directory") > -1;
+
+                    return next(boom.wrap(error, is404 ? 404 : 500, error.message));
+                }
+
+                //Preserve the post content
+                await setCacheValue("posts", postSummary.filename, postContent);
+            }
+
+            const post: BlogPost = Object.assign({}, {content: postContent.parsedContent}, postSummary);
+            const props: BlogPostProps = {
+                post: post,
+                title: post.title,
+                metaDescription: post.description,
+                requestUrl: req.url
+            };
+
+            res.render("blog/post", props);
+
+            return next();
+        }
+    })
 }
 
-export async function getBlogIndex(server: Server, request: Request, reply: IReply)
-{
-    const posts: BlogPostSummary[] = server.app.posts;
-    
+export const getBlogIndex: RouteHandler = async (req, res, next) => {
     const postsPerPage = 5;
-    const totalPosts = posts.length;
-    const currentPage = parseInt(request.query.page) || 1;
-    const pagePosts = clone(posts).splice(postsPerPage * (currentPage - 1), postsPerPage);
-    const totalPages = totalPosts % postsPerPage > 0 ? Math.floor(totalPosts / postsPerPage) + 1 : totalPosts / postsPerPage; 
-    
+    const totalPosts = summaries.length;
+    const currentPage = parseInt(req.query.page) || 1;
+    const pagePosts = clone(summaries).splice(postsPerPage * (currentPage - 1), postsPerPage);
+    const totalPages = totalPosts % postsPerPage > 0 ? Math.floor(totalPosts / postsPerPage) + 1 : totalPosts / postsPerPage;
+
     const props: BlogIndexProps = {
-        title: server.app.blogTitle,
-        blogLinkClass: "active",
+        title: BLOG_TITLE,
         currentPage: currentPage,
         totalPages: totalPages,
         posts: pagePosts,
         metaDescription: "Blog Posts",
+        requestUrl: req.url,
     };
-    
-    return reply.view("blog/index.js", props);
-}
 
-export async function getBlogPost(server: Server, request: Request, reply: IReply)
-{
-    const postContents: PostContent[] = server.app.postContents;
-    const posts: BlogPostSummary[] = server.app.posts;
-    
-    const url = request.params["url"] || "";
-    const postSummary = find(posts, post => post.url.toLowerCase() === url.toLowerCase());
-    
-    if (!postSummary)
-    {
-        return reply(boom.notFound("Page not found."));
-    }
-    
-    let postContent = find(postContents, content => content.filename === postSummary.filename);
-    
-    if (!postContent)
-    {
-        try
-        {
-            const fileContent = await readFile( resolvePath(server.app.rootDir, "../posts/markdown", postSummary.filename));
-            
-            postContent = {
-                filename: postSummary.filename,
-                parsedContent: new md("commonmark").render(fileContent.toString("utf8")), 
-            };
-        }
-        catch (e)
-        {
-            let error: Error = e;
-            
-            console.error(error);
-        
-            const is404 = error.message.indexOf("no such file or directory") > -1;
-            
-            return reply.response(boom.wrap(error, is404 ? 404 : 500, error.message));
-        }
-        
-        //Preserve the post content
-        postContents.push(postContent);
-    }
-    
-    const post: BlogPost = merge({content: postContent.parsedContent}, postSummary);
-    const props: BlogPostProps = {
-        post: post, 
-        title: post.title, 
-        blogLinkClass: "active",
-        metaDescription: post.description,
-        requestUrl: GetRequestUrl(request)
-    };
-    
-    return reply.view("blog/post.js", props);
+    res.render("blog/index", props);
+
+    return next();
 }

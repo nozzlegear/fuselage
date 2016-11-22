@@ -1,4 +1,4 @@
-@import "variables";
+@import "variables.styl";
 
 html.js-nav-active {
     nav#header-nav {
@@ -23,14 +23,14 @@ nav#header-nav {
     .container {
         display: flex;
         min-height: 66px;
-        max-width: $maxContainerWidth;
+        max-width: maxContainerWidth;
         margin: 0 auto;
 
-        @media all and (min-width: $navMinWidth) {
+        @media all and (min-width: navMinWidth) {
             align-items: center;
         }
 
-        @media all and (max-width: $navMaxWidth) {
+        @media all and (max-width: navMaxWidth) {
             -ms-flex-direction: column;
             -webkit-flex-direction: column;
             flex-direction: column;
@@ -41,7 +41,7 @@ nav#header-nav {
         display: flex;
         align-items: center;
 
-        @media all and (max-width: $navMaxWidth) {
+        @media all and (max-width: navMaxWidth) {
             -ms-flex: 1 1;
             -webkit-flex: 1 1;
             flex: 1 1;
@@ -66,7 +66,7 @@ nav#header-nav {
         #nav-toggle {
             display: none;
 
-            @media all and (max-width:$navMaxWidth) {
+            @media all and (max-width:navMaxWidth) {
                 -ms-flex: 1 0;
                 -webkit-flex: 1 0;
                 flex: 1 0;
@@ -83,7 +83,7 @@ nav#header-nav {
                 color: #7a7a7a;
                 margin: 0 15px;
 
-                @media all and (min-width:$navMinWidth) {
+                @media all and (min-width:navMinWidth) {
                     display: none;
                 }
 
@@ -102,7 +102,7 @@ nav#header-nav {
         display: flex;
         align-items: center;
 
-        @media all and (max-width:$navMaxWidth) {
+        @media all and (max-width:navMaxWidth) {
             -ms-flex-direction: column;
             -webkit-flex-direction: column;
             flex-direction: column;
@@ -112,7 +112,7 @@ nav#header-nav {
             list-style-type: none;
             display: flex;
 
-            @media all and (max-width:$navMaxWidth) {
+            @media all and (max-width:navMaxWidth) {
                 padding: 0;
                 margin: 0;
                 -ms-flex-direction: column;
@@ -132,7 +132,7 @@ nav#header-nav {
                 flex-direction: row;
                 justify-content: flex-end;
                 
-                @media all and (max-width: $navMaxWidth) {
+                @media all and (max-width: navMaxWidth) {
                     -ms-flex-direction: column;
                     -webkit-flex-direction: column;
                     flex-direction: column;
@@ -147,7 +147,7 @@ nav#header-nav {
                 position: relative;
                 padding: 10px 0;
 
-                @media all and (max-width: $navMaxWidth) {
+                @media all and (max-width: navMaxWidth) {
                     border-top: 1px solid #ccc;
                     padding: 0;
                     width: 100%;
@@ -160,7 +160,7 @@ nav#header-nav {
                 }
 
                 > a.btn {
-                    @media all and (max-width: $navMaxWidth) {
+                    @media all and (max-width: navMaxWidth) {
                         margin: 15px 0;
                     }
                 }
@@ -180,7 +180,7 @@ nav#header-nav {
                         border-bottom: 2px solid #7461aa;
                     }
 
-                    @media all and (max-width: $navMaxWidth) {
+                    @media all and (max-width: navMaxWidth) {
                         display: block;
                         width: 100%;
                         padding: 15px 0;

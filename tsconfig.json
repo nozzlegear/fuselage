@@ -1,20 +1,16 @@
 {
     "compilerOptions": {
         "module": "commonjs",
-        "target": "es6",
+        "target": "es2015",
         "noImplicitAny": false,
-        "sourceMap": false,
+        "sourceMap": true,
         "outDir": "bin",
-        "jsx": "react"
+        "jsx": "preserve"
     },
     "exclude": [
+        "node_modules",
         "bin",
         "dist",
-        "packages",
-        "browser",
-        "node_modules",
-        "typings/browser",
-        "typings/browser.d.ts",
-        "typings/custom"
+        "js"
     ]
 }

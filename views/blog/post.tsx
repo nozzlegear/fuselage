@@ -1,35 +1,33 @@
-/// <reference path="./../../typings/index.d.ts" />
-
 import * as React from "react";
-import {BlogPost} from "fuselage";
-import Layout, {LayoutProps} from "../layout";
-import {FuselageConfig} from "fuselage";
+import { BlogPost } from "fuselage";
+import Layout, { LayoutProps } from "../layout";
+import { BLOG_INDEX_AT_HOME } from "../../modules/constants";
 
-export interface IProps extends LayoutProps
-{
-    post: BlogPost;
-    requestUrl: {
-        hostname: string,
-        protocol: string;
-        path: string;
+namespace BlogPostPage {
+    export interface IProps extends LayoutProps {
+        post: BlogPost;
+        title: string;
+        metaDescription: string;
     }
 }
 
-export default function BlogPostPage(props: IProps & FuselageConfig)
-{
+function BlogPostPage(props: BlogPostPage.IProps) {
+    const post = props.post;
     const scripts = [
-        "/wwwroot/js/blog/blog-post.min.js"
+        "/wwwroot/vendor/highlightjs/index.min.js",
+        "/wwwroot/js/blog/blog-post.js"
     ];
     const css = [
-        "/wwwroot/css/post.min.css",
+        "/wwwroot/vendor/highlightjs/index.min.css",
+        "/wwwroot/css/post.css",
     ];
-    
-    const shareUrl = `${props.requestUrl.protocol}://${props.requestUrl.hostname}/blog/${props.post.url}`;
+
+    const shareUrl = props.requestUrl;
 
     const share = (
         <div className="share">
             <h4>Share this post</h4>
-            <a className="icon-twitter" href={`https://twitter.com/share?text=${`${encodeURIComponent(props.post.title)}${props.authorTwitterUsername ? ` - via @${props.authorTwitterUsername} -` : ""}`}&url=${shareUrl}`}>
+            <a className="icon-twitter" href={`https://twitter.com/share?text=${`${encodeURIComponent(props.post.title)}`}&url=${shareUrl}`}>
                 <i className="fa fa-twitter-square" />
             </a>
             <a className="icon-facebook" href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`}>
@@ -40,27 +38,30 @@ export default function BlogPostPage(props: IProps & FuselageConfig)
             </a>
         </div>
     );
-    
+
     return (
         <Layout {...props} css={css} scripts={scripts}>
             <section className="page-main" id="blog-post">
                 <h4 className="post-meta">
-                    {`by ${props.authorName}`}
+                    {`by ${post.author}`}
                 </h4>
-                <article className="post" dangerouslySetInnerHTML={{__html: props.post.content}} />
+                <article className="post" dangerouslySetInnerHTML={{ __html: props.post.content }} />
                 <div className="post-footer">
                     <div className="author">
-                        <h4>{props.authorName}</h4>
+                        <h4>{post.author}</h4>
                         <p>
-                            {props.authorDescription}
+                            {post.author_description}
                         </p>
                     </div>
                     {share}
                 </div>
                 <div className="back">
-                    <a href={props.blogIndexAtHome ? "/" : "/blog"}>Click here to head back to the blog.</a>
+                    <a href={BLOG_INDEX_AT_HOME ? "/" : "/blog"}>Click here to head back to the blog.</a>
                 </div>
             </section>
         </Layout>
     )
 }
+
+// Any view that gets directly rendered must be the file's only export.
+export = BlogPostPage; 

@@ -1,23 +1,16 @@
-/// <reference path="./../../typings/index.d.ts" />
+import { getBlogIndex } from "../blog";
+import { RouterFunction, RouteHandler } from "fuselage";
+import { BLOG_INDEX_AT_HOME } from "../../modules/constants";
 
-import {IReply} from "hapi";
-import {getBlogIndex} from "./../blog";
-import {FuselageServer as Server} from "fuselage";
-
-export function registerRoute(server: Server)
-{
-    let indexHandler: any = (request, reply: IReply) => reply.redirect("/blog").temporary(true);
-    
-    if (server.app.blogIndexAtHome)
-    {
-        indexHandler = {
-            async: async (request, reply) => await getBlogIndex(server, request, reply)
-        };
-    }
-    
-    server.route({
-        method: "GET",
+export default function registerRoutes(route: RouterFunction) {
+    route({
+        method: "get",
         path: "/",
-        handler: indexHandler
+        sitemap: true,
+        handler: BLOG_INDEX_AT_HOME ? getBlogIndex : (req, res, next) => {
+            res.redirect("/blog", 302 /* Temporary redirect */);
+
+            return next();
+        }
     })
 }

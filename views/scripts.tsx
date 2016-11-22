@@ -1,5 +1,3 @@
-/// <reference path="./../typings/index.d.ts" />
-
 import * as React from "react";
 import {map, uniqueId} from "lodash";
 
@@ -17,7 +15,7 @@ export default function Scripts(props: IProps)
     
     return (
         <div className="hide">
-            <script src="/wwwroot/js/extra.min.js" />
+            <script src="/wwwroot/js/extra.js" />
             {scripts}
             {props.children}  
         </div>

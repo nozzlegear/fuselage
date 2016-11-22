@@ -1,35 +1,29 @@
-/// <reference path="./../../typings/index.d.ts" />
-
 import * as React from "react";
 import LayoutHead from "../head";
-import {LayoutProps} from "../layout";
-import {FuselageConfig} from "fuselage";
+import { LayoutProps } from "../layout";
+import { APP_NAME } from "../../modules/constants";
 
-export interface IProps extends LayoutProps
-{
-    errorType: string;
-    
-    message: string;
-    
-    statusCode: number;
+namespace ErrorPage {
+    export interface IProps {
+        errorType: string;
+
+        message: string;
+
+        statusCode: number;
+    }
 }
 
-export default function ErrorPage(props: IProps & FuselageConfig)
-{
-    const css = ".error {color: #fff;}.error h2 {font-size: 10em;text-align: center;}.error h3 {text-align: center;margin-bottom: 25px;} .error p.lead {text-align: center;}";
-    const styles = ["/wwwroot/css/error.min.css"];
-    
+function ErrorPage(props: ErrorPage.IProps) {
+    const styles = ["/wwwroot/css/error.css"];
+
     return (
         <html>
-            <LayoutHead {...props} css={styles}>
-                <meta name="robots" content="noindex, nofollow" />
-                <style dangerouslySetInnerHTML={{__html: css}} />
-            </LayoutHead>
+            <LayoutHead title={props.errorType} css={styles} noIndexNoFollow={true} />
             <body className="minimal">
                 <main id="error">
                     <h1 className="logo">
                         <a href="/">
-                            {props.appName} 
+                            {APP_NAME}
                         </a>
                     </h1>
                     <div className="error">
@@ -37,10 +31,13 @@ export default function ErrorPage(props: IProps & FuselageConfig)
                             Oops!
                         </h2>
                         <h3>{props.errorType}.</h3>
-                        <a className="back" href="/" style={{"color":"#fff", "textDecoration":"underline"}}>Click here to go back.</a>
+                        <a className="back" href="/" style={{ "color": "#fff", "textDecoration": "underline" }}>Click here to go back.</a>
                     </div>
                 </main>
             </body>
         </html>
     )
 }
+
+// Any view that gets directly rendered must be the file's only export.
+export = ErrorPage;

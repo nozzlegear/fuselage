@@ -1,133 +1,106 @@
-/// <reference path="./typings/index.d.ts" />
-
-import * as Hapi from "hapi";
-import * as joi from "joi";
-import * as boom from "boom";
 import * as path from "path";
-import * as util from "util";
-import uri = require('jsuri');
-import {FuselageServer, FuselageConfig} from "fuselage";  
-import {every as all, clone, find, some, merge, filter, map, isArray, isError} from "lodash";
+import * as http from "http";
+import * as https from "https";
+import * as express from "express";
+import inspect from "./modules/inspect";
+import { BlogPostSummary } from "fuselage";
+import { BIN_ROOT } from "./modules/constants";
+import { BoomError, wrap, notFound } from "boom";
+import { IProps as ErrorProps } from "./views/errors/error";
+import { json as parseJson, urlencoded as parseUrlEncoded } from "body-parser";
 
-//Import routes
-import {RoutesToRegister} from "./routes";
+// Server configurations
+import configureCache from "./modules/cache";
+import configureRoutes from "./routes";
 
-//Interfaces
-import {LayoutProps} from "./views/layout";
-import {BlogPostSummary, BlogPost} from "fuselage";
-import {IProps as ErrorPageProps} from "./views/errors/error";
+async function startServer(hostname: string, port: number, securePort?: number) {
+    const app = express();
 
-//Import the post index and Fuselage config
-const posts: BlogPostSummary[] = require(path.join(__dirname, "../", "posts/index.json"));
-const fuselage: FuselageConfig = require(path.join(__dirname, "../", "fuselage.json"));
+    app.use((req, res, next) => {
+        res.setHeader("x-powered-by", `Fuselage https://github.com/nozzlegear/fuselage`);
 
-//Other imports
-const inert = require("inert"); //Inert gives Hapi static file and directory handling via reply.file and reply.directory.
-const vision = require("vision"); //Vision gives Hapi dynamic view rendering.
-const yar = require("yar"); //Yar is a cookie management plugin for Hapi.
-const hapiAsync = require("hapi-async-handler"); //Adds async support to Hapi route handlers.
-const reactViewEngine = require("hapi-react-views");
-const npmPackage = require(path.join(__dirname, "../", "package.json"));
+        next();
+    });
 
-//Prepare Hapi server
-const server: FuselageServer = new Hapi.Server();
-const config: Hapi.IServerConnectionOptions = {
-    port: process.env.PORT || 3000,
-    host: process.env.HOST || "localhost",
-    router: {
-        isCaseSensitive: false,
-        stripTrailingSlash: true
-    }
-};
-const connection = server.connection(config);
+    // Set up the react view engine
+    app.set('views', path.resolve(BIN_ROOT, "./views"));
+    app.set('view engine', 'jsx');
+    app.engine('jsx', require('express-react-views').createEngine());
 
-async function registerPlugins()
-{
-    await server.register(inert);
-    await server.register(vision);
-    await server.register(hapiAsync);
-    await server.register({
-        register: yar,
-        options: {
-            storeBlank: false,
-            cookieOptions: {
-                password: 'REPLACE-THIS-WITH-A-STRONG-32-CHAR-PASSWORD',
-                isSecure: true,
-                ignoreErrors: true, //tells Hapi that it should not respond with a HTTP 400 error if the session cookie cannot decrypt
-                clearInvalid: true  //tells Hapi that if a session cookie is invalid for any reason, to clear it from the browser.
-            }
+    // Any request to the /wwwroot and /images paths should serve static files from those folders.
+    app.use("/wwwroot", express.static("wwwroot"));
+    app.use("/images", express.static("images"));
+
+    // Let express trust the proxy that may be used on certain hosts (e.g. Azure and other cloud hosts). 
+    // Enabling this will replace the `request.protocol` with the protocol that was requested by the end user, 
+    // rather than the internal protocol used by the proxy.
+    app.enable("trust proxy");
+
+    // Set up request body parsers
+    app.use(parseJson());
+    app.use(parseUrlEncoded({ extended: true }));
+
+    // Configure the server
+    await configureCache();
+    await configureRoutes(app);
+
+    // Wildcard route must be set after all other routes are registered
+    app.get("*", (req, res, next) => {
+        if (res.finished) {
+            return;
         }
+
+        throw notFound();
     })
+
+    // Typescript type guard for boom errors
+    function isBoomError(err): err is BoomError {
+        return err.isBoom;
+    }
+
+    // Register an error handler for all routes
+    app.use(function (err: Error | BoomError, req: express.Request, res: express.Response, next: Function) {
+        const fullError = isBoomError(err) ? err : wrap(err);
+
+        if (fullError.output.statusCode >= 500) {
+            inspect(`Error in ${req.url}`, err);
+        }
+
+        res.status(fullError.output.statusCode);
+
+        if (!/^\/?api/i.test(req.path)) {
+            const props: ErrorProps = {
+                statusCode: fullError.output.statusCode,
+                errorType: fullError.output.payload.error,
+                message: fullError.message,
+            };
+
+            res.render("errors/error", props);
+        } else {
+            res.json(fullError.output.payload);
+        }
+
+        return next();
+    } as any);
+    
+    const httpServer = http.createServer(app).listen(port, hostname);
+    const httpsServer = (!!securePort && https.createServer(app).listen(securePort, hostname)) || undefined;
+
+    return {
+        http: httpServer,
+        https: httpServer,
+    }
 }
 
-async function startServer()
-{
-    await registerPlugins();
-    
-    //Configure the server's app state
-    server.app = merge({}, fuselage, {
-        posts: posts || [],
-        postContents: [],
-        rootDir: __dirname
-    });
-    
-    const isLive = process.env.NODE_ENV === "production";
-    
-    //Set the viewengine to use react as its view engine.
-    server.views({
-        engines: {
-            js: reactViewEngine
-        },
-        compileOptions:{},
-        relativeTo: path.resolve(__dirname),
-        path: "views",
-        context: fuselage
-    });
-    
-    
-    //Filter all responses to check if they have an error. If so, render the error page.
-    server.ext("onPreResponse", (request, reply) =>
-    {
-        if (request.response.isBoom || isError(request.response))
-        {
-            const resp: Boom.BoomError = request.response as any;
-            const payload: { error: string, message: string, statusCode: number } = resp.output.payload;
-            const props: ErrorPageProps = merge({
-                errorType: payload.error,
-                message: payload.message,
-                statusCode: payload.statusCode,
-                metaDescription: undefined,
-                title: payload.error
-            }, fuselage);
-            
-            console.log(`${payload.statusCode} ${payload.error} for ${request.url.pathname}. ${resp.message}.`, payload.statusCode >= 500 ? util.inspect(resp) : "");
-
-            return (reply.view("errors/error.js", props)).code(payload.statusCode);
-        }
-        
-        request.response.header("X-POWERED-BY", "Fuselage");
-        
-        return reply.continue();
-    }); 
-    
-    //Register all app routes.
-    RoutesToRegister.forEach((register) => register(server));
-    
-    return server.start((error) =>
-    {
-        if (error)
-        {
-            throw error;
-        }
-        
-        console.log(`${isLive ? "Live" : "Development"} server running at:`, server.info.uri);
-    })
-};
+const host = process.env.HOST || "127.0.0.1";
+const port = process.env.PORT || 3000;
+const securePort = process.env.SECURE_PORT || 3001;
 
 //Start the server
-startServer().catch((err) =>
-{
-    console.log("Hapi server registration error.", err);
-    
+startServer(host, port, securePort).then((servers) => {
+    console.log(`HTTP and HTTPS servers listening on ${host}:${port} and ${host}:${securePort}.`);
+}).catch((err) => {
+    inspect("Server configuration error.", err);
+
     throw err;
 });

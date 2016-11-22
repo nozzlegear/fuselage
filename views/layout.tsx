@@ -1,77 +1,66 @@
-/// <reference path="./../typings/index.d.ts" />
-
 import * as React from "react";
-import {map, uniqueId, clone} from "lodash";
+import { map, uniqueId, clone } from "lodash";
 import ImageHero from "./_components/image-hero";
-import LayoutHead, {IProps as HeadProps} from "./head"
-import {FuselageConfig} from "fuselage";
-import LayoutScripts, {IProps as ScriptProps} from "./scripts";
+import LayoutHead, { IProps as HeadProps } from "./head"
+import LayoutScripts, { IProps as ScriptProps } from "./scripts";
+import { APP_NAME, THEME_COLOR, BLOG_TITLE, BLOG_INDEX_AT_HOME } from "../modules/constants";
 
-export interface LayoutProps extends HeadProps, ScriptProps
-{   
+export interface LayoutProps extends HeadProps, ScriptProps {
     scripts?: string[];
-    
-    sdhLinkClass?: string;
-    
-    blogLinkClass?: string;
-    
+
     customHeroTitle?: string;
+
+    requestUrl: string;
 }
 
-export default function Layout(props: LayoutProps & FuselageConfig)
-{       
-    const headProps = clone(props);
-    
-    //Headprops should not have children , else it will duplicate the layout page's children content.
-    headProps.children = undefined;
-    
+export default function Layout(props: LayoutProps) {
     return (
         <html lang="en">
-        <LayoutHead {...headProps} />
-        <body>
-            <nav id="header-nav">
-                <div className="container">
-                    <div className="brand">
-                        <a href="/">
-                            {props.appName}
-                        </a>
-                        <div id="nav-toggle">
-                            <a href="#" id="toggler" className="toggler">
-                                <i className="fa fa-bars"></i>
+            <LayoutHead css={props.css} metaDescription={props.metaDescription} skipCommonCss={props.skipCommonCss} title={props.title} />
+            <body>
+                <nav id="header-nav">
+                    <div className="container">
+                        <div className="brand">
+                            <a href="/">
+                                {APP_NAME}
                             </a>
-                        </div>
-                    </div>
-                    <div id="collapsible" className="collapsible">
-                        <menu className="right">
-                            <div className={props.blogLinkClass}>
-                                <a href={props.blogIndexAtHome ? "/" : "/blog"}>
-                                    {props.blogTitle}
+                            <div id="nav-toggle">
+                                <a href="#" id="toggler" className="toggler">
+                                    <i className="fa fa-bars"></i>
                                 </a>
                             </div>
-                        </menu>
+                        </div>
+                        <div id="collapsible" className="collapsible">
+                            <menu className="right">
+                                <div className={/\/blog\/?/i.test(props.requestUrl) ? "active" : ""}>
+                                    <a href={BLOG_INDEX_AT_HOME ? "/" : "/blog"}>
+                                        {BLOG_TITLE}
+                                    </a>
+                                </div>
+                            </menu>
+                        </div>
                     </div>
-                </div>
-            </nav>
-            <ImageHero title={props.customHeroTitle || props.title} themeColor={props.themeColor} />
-            <main id="container">
-                {props.children}
-            </main>
-            <footer id="footer">
-                <div>
-                    <p>
-                        {`© ${props.appName}, ${new Date().getUTCFullYear()}. All rights reserved.`}
-                    </p>
-                    <p>
-                        {"Powered by "}
-                        <a target="_blank" href="https://github.com/nozzlegear/fuselage">
-                            {"Fuselage"}
-                        </a>
-                        {"."}
-                    </p>
-                </div>
-            </footer>
-            <LayoutScripts scripts={props.scripts} />
-        </body>
+                </nav>
+                <ImageHero title={props.customHeroTitle || props.title} />
+                <main id="container">
+                    {props.children}
+                </main>
+                <footer id="footer">
+                    <div>
+                        <p>
+                            {`© ${APP_NAME}, ${new Date().getUTCFullYear()}. All rights reserved.`}
+                        </p>
+                        <p>
+                            {"Powered by "}
+                            <a target="_blank" href="https://github.com/nozzlegear/fuselage">
+                                {"Fuselage"}
+                            </a>
+                            {"."}
+                        </p>
+                    </div>
+                </footer>
+                <LayoutScripts scripts={props.scripts} />
+            </body>
         </html>
     )
 }

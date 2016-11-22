@@ -1,14 +1,18 @@
 {
     "compilerOptions": {
         "module": "commonjs",
-        "target": "es5",
+        "target": "es2015",
         "noImplicitAny": false,
         "sourceMap": false,
         "jsx": "react",
-        "outDir": "../wwwroot/js"
+        "outDir": "../wwwroot/js",
+        "typeRoots": [
+            "../typings",
+            "../node_modules/@types"
+        ]
     },
     "files": [
-        "nav.ts",
+        "extra.ts",
         "blog/blog-post.ts"
     ]
 }
